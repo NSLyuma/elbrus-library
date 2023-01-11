@@ -1,9 +1,13 @@
 const booksRouter = require('express').Router();
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
 const { User } = require('../db/models');
 const { Book } = require('../db/models');
 const { Comment } = require('../db/models');
 const BookList = require('../views/BookList');
 const BookShow = require('../views/BookShow');
+const CommentItem = require('../views/CommentItem');
+const CommentList = require('../views/CommentList');
 const EditBook = require('../views/EditBook');
 
 booksRouter.get('/', async (req, res) => {
@@ -74,17 +78,30 @@ booksRouter.get('/:id', async (req, res) => {
     return;
   }
 
-  res.renderComponent(BookShow, { book, userId, url });
+  let comments;
+
+  try {
+    comments = await Comment.findAll({
+      where: { bookId },
+      include: Comment.Author,
+    });
+  } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
+    res.status(500).renderComponent(BookShow, { url, error: 'Ошибка сервера' });
+    return;
+  }
+
+  res.renderComponent(BookShow, { book, userId, url, comments });
 });
 
 booksRouter.post('/:id', async (req, res) => {
   const bookId = req.params.id;
   const { userId } = req.session;
   const url = userId ? 'authorized' : '';
-
-  const commentText = req.body.comment.trim();
+  const commentText = req.body.comment;
 
   let comment;
+
   try {
     comment = await Comment.create({
       userId,
@@ -101,12 +118,13 @@ booksRouter.post('/:id', async (req, res) => {
     return;
   }
 
-  let book;
+  let comments;
 
   try {
-    book = await Book.findOne({
-      where: { id: bookId },
-      include: Book.Likes,
+    comments = await Comment.findAll({
+      where: { bookId },
+      include: Comment.Author,
+      order: [['id', 'ASC']],
     });
   } catch (error) {
     console.log(`Ошибка сервера: ${error.message}`);
@@ -114,16 +132,10 @@ booksRouter.post('/:id', async (req, res) => {
     return;
   }
 
-  let comments;
-
-  try {
-    comments = await Comment.findAll({ where: { bookId } });
-  } catch (error) {
-    console.log(`Ошибка сервера: ${error.message}`);
-    res.status(500).renderComponent(BookShow, { url, error: 'Ошибка сервера' });
-    return;
-  }
-  res.renderComponent(BookShow, { book, userId, url, comments });
+  // так и не поняла, как устанавливать doctype: false
+  const list = React.createElement(CommentList, { comments });
+  const html = ReactDOMServer.renderToStaticMarkup(list);
+  res.send(html);
 });
 
 booksRouter.put('/:id', async (req, res) => {

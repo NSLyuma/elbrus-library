@@ -1,5 +1,10 @@
 const React = require('react');
 
-module.exports = function BookItem({ comment }) {
-  return <li>{comment.text}</li>;
+module.exports = function CommentItem({ comment }) {
+  return (
+    <li className="js-comment">
+      <p>Пользователь: {comment.author.name}</p>
+      <p>Комментарий: {comment.text}</p>
+    </li>
+  );
 };

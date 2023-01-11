@@ -61,13 +61,26 @@ if (deleteBtn) {
   });
 }
 
-const likes = document.querySelectorAll('.js-like');
+const newCommentForm = document.querySelector('.js-new-comment');
 
-// likes.forEach((like) => {
-//   like.addEventListener('click', async (event) => {
-//     event.preventDefault();
+if (newCommentForm) {
+  newCommentForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-//     const url = like.href;
-//     await fetch(url, { method: 'POST' });
-//   });
-// });
+    const commentList = document.querySelector('.js-comments');
+    const url = event.target.action;
+    const method = event.target.method;
+    const comment = event.target.comment.value;
+    const data = JSON.stringify({ comment });
+
+    const response = await fetch(url, {
+      method,
+      body: data,
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const result = await response.text();
+
+    commentList.innerHTML = result;
+  });
+}

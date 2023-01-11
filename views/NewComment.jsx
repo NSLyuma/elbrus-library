@@ -4,7 +4,7 @@ module.exports = function NewComment({ id }) {
   return (
     <div>
       <h3>Оставьте свой комментарий</h3>
-      <form action={`/books/${id}`} method="POST">
+      <form className="js-new-comment" action={`/books/${id}`} method="POST">
         <textarea name="comment" placeholder="Пишите здесь" />
         <button type="submit">Отправить</button>
       </form>

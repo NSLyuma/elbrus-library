@@ -1,11 +1,13 @@
 const React = require('react');
 const CommentItem = require('./CommentItem');
+const CommentList = require('./CommentList');
 const Footer = require('./Footer');
 const Header = require('./Header');
 const Layout = require('./Layout');
 const NewComment = require('./NewComment');
 
 module.exports = function BookShow({ book, userId, url, comments, error }) {
+  const commentsCount = comments ? comments.length : 0;
   return (
     <Layout>
       <Header url={url} userId={userId} />
@@ -43,15 +45,10 @@ module.exports = function BookShow({ book, userId, url, comments, error }) {
             <span>{book.likedByUsers.length || 0}</span>
           </p>
           <div>
-            <h4>
-              Комментарии
-              <span> {comments.length}</span>
-            </h4>
-            <ul>
-              {comments.map((comment) => (
-                <CommentItem comment={comment} />
-              ))}
-            </ul>
+            <h4>Комментарии</h4>
+            <div className="js-comments">
+              <CommentList comments={comments} />
+            </div>
             <NewComment id={book.id} />
           </div>
         </div>

@@ -15,13 +15,6 @@ module.exports = (sequelize, DataTypes) => {
         as: 'likedByUsers',
       });
 
-      // Book.Comments = Book.belongsToMany(User, {
-      //   through: 'Comments',
-      //   foreignKey: 'bookId',
-      //   otherKey: 'userId',
-      //   as: 'comments',
-      // });
-
       Book.Comments = Book.hasMany(Comment, {
         onDelete: 'cascade',
         foreignKey: 'bookId',
