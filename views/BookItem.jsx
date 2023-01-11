@@ -29,6 +29,8 @@ module.exports = function BookItem({ book, userId }) {
           </p>
         </div>
       )}
+
+      <a href={`/books/${book.id}/download`}>Скачать книгу</a>
     </li>
   );
 };

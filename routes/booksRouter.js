@@ -6,7 +6,6 @@ const { Book } = require('../db/models');
 const { Comment } = require('../db/models');
 const BookList = require('../views/BookList');
 const BookShow = require('../views/BookShow');
-const CommentItem = require('../views/CommentItem');
 const CommentList = require('../views/CommentList');
 const EditBook = require('../views/EditBook');
 
@@ -169,8 +168,31 @@ booksRouter.put('/:id', async (req, res) => {
 });
 
 booksRouter.delete('/:id', async (req, res) => {
+  const { userId } = req.session;
+  const url = userId ? 'authorized' : '';
+
+  let user;
+
   try {
-    await Book.destroy({ where: { id: req.params.id } });
+    user = await User.findByPk(userId);
+  } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
+    res.status(500).renderComponent(BookList, {
+      error: 'Ошибка сервера',
+    });
+    return;
+  }
+
+  if (!user) {
+    res.status(403).renderComponent(BookList, {
+      error: 'Вы не авторизованы!',
+    });
+    return;
+  }
+
+  let book;
+  try {
+    book = await Book.findByPk(req.params.id);
   } catch (error) {
     console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(BookList, {
@@ -180,8 +202,16 @@ booksRouter.delete('/:id', async (req, res) => {
     return;
   }
 
-  const { userId } = req.session;
-  const url = userId ? 'authorized' : '';
+  if (userId !== book.userId) {
+    res.status(403).renderComponent(BookList, {
+      url,
+      error: 'Вы не можете удалить эту книгу!',
+    });
+    return;
+  }
+
+  book.destroy();
+
   let books;
 
   try {
@@ -245,6 +275,10 @@ booksRouter.get('/:id/edit', async (req, res) => {
   }
 
   res.renderComponent(EditBook, { book });
+});
+
+booksRouter.get('/:id/download', (req, res) => {
+  res.send(req.files);
 });
 
 module.exports = booksRouter;

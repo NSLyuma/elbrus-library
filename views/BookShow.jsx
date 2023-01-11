@@ -1,5 +1,4 @@
 const React = require('react');
-const CommentItem = require('./CommentItem');
 const CommentList = require('./CommentList');
 const Footer = require('./Footer');
 const Header = require('./Header');
@@ -7,7 +6,6 @@ const Layout = require('./Layout');
 const NewComment = require('./NewComment');
 
 module.exports = function BookShow({ book, userId, url, comments, error }) {
-  const commentsCount = comments ? comments.length : 0;
   return (
     <Layout>
       <Header url={url} userId={userId} />
@@ -34,6 +32,8 @@ module.exports = function BookShow({ book, userId, url, comments, error }) {
           </a>
         </div>
       )}
+
+      <a href={`/books/${book.id}/download`}>Скачать книгу</a>
 
       {userId && (
         <div>

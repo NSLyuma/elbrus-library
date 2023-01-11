@@ -17,6 +17,8 @@ module.exports = function NewBook() {
 
         <input name="link" type="text" placeholder="Ссылка на книгу" />
 
+        <input name="file" type="file" />
+
         <button type="submit">Добавить</button>
       </form>
       <Footer />
