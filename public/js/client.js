@@ -41,3 +41,22 @@ if (editForm) {
     window.location.assign(url);
   });
 }
+
+const deleteBtn = document.querySelector('.js-delete-book');
+
+if (deleteBtn) {
+  deleteBtn.addEventListener('click', async (event) => {
+    event.preventDefault();
+
+    const book = event.target.closest('.js-book');
+    const url = deleteBtn.href;
+
+    await fetch(url, { method: 'DELETE' });
+
+    if (book) {
+      book.remove();
+    }
+
+    window.location.assign('/');
+  });
+}

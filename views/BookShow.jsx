@@ -18,7 +18,9 @@ module.exports = function BookShow({ book, userId, url }) {
       {userId === book.userId && (
         <div>
           <a href={`/books/${book.id}/edit`}>Редактировать</a>
-          <a href={`/books/${book.id}`}>Удалить</a>
+          <a className="js-delete-book" href={`/books/${book.id}`}>
+            Удалить
+          </a>
         </div>
       )}
 

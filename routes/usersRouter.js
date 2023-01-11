@@ -12,8 +12,9 @@ usersRouter.delete('/:id', async (req, res) => {
   try {
     books = await Book.findAll();
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(BookList, {
-      error: `Ошибка сервера: ${error.message}`,
+      error: 'Ошибка сервера',
     });
     return;
   }
@@ -29,8 +30,9 @@ usersRouter.get('/:id/books', async (req, res) => {
   try {
     books = await Book.findAll({ where: { userId }, include: Book.Likes });
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(BookList, {
-      error: `Ошибка сервера: ${error.message}`,
+      error: 'Ошибка сервера',
     });
     return;
   }
@@ -40,14 +42,17 @@ usersRouter.get('/:id/books', async (req, res) => {
 usersRouter.get('/:id/books/:bookId', async (req, res) => {
   const { userId } = req.session;
   const { bookId } = req.params;
+  const url = userId ? 'authorized' : '';
 
   let user;
 
   try {
     user = await User.findOne({ where: { id: userId }, include: User.Likes });
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(BookList, {
-      error: `Ошибка сервера: ${error.message}`,
+      url,
+      error: 'Ошибка сервера',
     });
     return;
   }
@@ -57,8 +62,10 @@ usersRouter.get('/:id/books/:bookId', async (req, res) => {
   try {
     book = await Book.findOne({ where: { id: bookId }, include: Book.Likes });
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(BookList, {
-      error: `Ошибка сервера: ${error.message}`,
+      url,
+      error: 'Ошибка сервера',
     });
     return;
   }

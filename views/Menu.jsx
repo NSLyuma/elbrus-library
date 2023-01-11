@@ -5,7 +5,7 @@ module.exports = function Menu({ userId }) {
     <nav>
       <ul>
         <li>
-          <a href="/books/new">Добавить книгу</a>
+          <a href="/new">Добавить книгу</a>
         </li>
         <li>
           <a href={`/users/${userId}/books`}>Мои книги</a>

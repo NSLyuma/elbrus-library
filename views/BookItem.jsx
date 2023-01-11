@@ -2,7 +2,7 @@ const React = require('react');
 
 module.exports = function BookItem({ book, userId }) {
   return (
-    <li>
+    <li className="js-book">
       <img width="100px" src={book.image} alt="cover" />
       <a href={`/books/${book.id}`}>{book.title}</a>
       <a href={book.link} target="_blank">
@@ -12,7 +12,9 @@ module.exports = function BookItem({ book, userId }) {
       {userId === book.userId && (
         <div>
           <a href={`/books/${book.id}/edit`}>Редактировать</a>
-          <a href={`/books/${book.id}`}>Удалить</a>
+          <a className="js-delete-book" href={`/books/${book.id}`}>
+            Удалить
+          </a>
         </div>
       )}
 

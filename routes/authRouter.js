@@ -25,9 +25,10 @@ authRouter.post('/login', async (req, res) => {
   try {
     user = await User.findOne({ where: { email: req.body.email } });
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(Auth, {
       url,
-      error: `Ошибка сервера: ${error.message}`,
+      error: 'Ошибка сервера',
     });
     return;
   }
@@ -47,9 +48,10 @@ authRouter.post('/login', async (req, res) => {
   try {
     isSame = await bcrypt.compare(rawPassword, hashedPassword);
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(Auth, {
       url,
-      error: `Ошибка сервера: ${error.message}`,
+      error: 'Ошибка сервера',
     });
     return;
   }
@@ -105,9 +107,10 @@ authRouter.post('/register', async (req, res) => {
   try {
     isEmailRepeat = await User.findOne({ where: { email: req.body.email } });
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(Auth, {
       url,
-      error: `Ошибка сервера: ${error.message}`,
+      error: 'Ошибка сервера',
     });
     return;
   }
@@ -128,9 +131,10 @@ authRouter.post('/register', async (req, res) => {
       Number(process.env.SALT_ROUNDS) || 11,
     );
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(Auth, {
       url,
-      error: `Ошибка сервера: ${error.message}`,
+      error: 'Ошибка сервера',
     });
     return;
   }
@@ -155,6 +159,7 @@ authRouter.post('/register', async (req, res) => {
 
     res.redirect('/books');
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(Auth, {
       url,
       error: `Не удалось зарегистрироваться! ${error.message}`,

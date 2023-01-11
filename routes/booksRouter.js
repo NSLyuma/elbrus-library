@@ -4,7 +4,6 @@ const { Book } = require('../db/models');
 const BookList = require('../views/BookList');
 const BookShow = require('../views/BookShow');
 const EditBook = require('../views/EditBook');
-const NewBook = require('../views/NewBook');
 
 booksRouter.get('/', async (req, res) => {
   const { userId } = req.session;
@@ -17,9 +16,10 @@ booksRouter.get('/', async (req, res) => {
       order: [['id', 'ASC']],
     });
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(BookList, {
       url,
-      error: `Ошибка сервера: ${error.message}`,
+      error: 'Ошибка сервера',
     });
     return;
   }
@@ -45,9 +45,10 @@ booksRouter.post('/', async (req, res) => {
 
     res.redirect('/');
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(BookList, {
       url: 'authorized',
-      error: `Ошибка сервера: ${error.message}`,
+      error: 'Ошибка сервера',
     });
     return;
   }
@@ -62,8 +63,9 @@ booksRouter.get('/:id', async (req, res) => {
   try {
     book = await Book.findOne({ where: { id: bookId }, include: Book.Likes });
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(BookList, {
-      error: `Ошибка сервера: ${error.message}`,
+      error: 'Ошибка сервера',
     });
     return;
   }
@@ -72,6 +74,7 @@ booksRouter.get('/:id', async (req, res) => {
 });
 
 booksRouter.put('/:id', async (req, res) => {
+  const { userId } = req.session;
   let book;
 
   try {
@@ -80,9 +83,10 @@ booksRouter.put('/:id', async (req, res) => {
       include: Book.Likes,
     });
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(BookList, {
       url: 'authorized',
-      error: `Ошибка сервера: ${error.message}`,
+      error: 'Ошибка сервера',
     });
     return;
   }
@@ -96,18 +100,53 @@ booksRouter.put('/:id', async (req, res) => {
 
   book.save();
 
-  res.renderComponent(BookShow, { book, userId: req.session.userId });
+  res.renderComponent(BookShow, { book, userId });
+});
+
+booksRouter.delete('/:id', async (req, res) => {
+  try {
+    await Book.destroy({ where: { id: req.params.id } });
+  } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
+    res.status(500).renderComponent(BookList, {
+      url: 'authorized',
+      error: 'Ошибка сервера',
+    });
+    return;
+  }
+
+  const { userId } = req.session;
+  const url = userId ? 'authorized' : '';
+  let books;
+
+  try {
+    books = await Book.findAll({
+      include: Book.Likes,
+      order: [['id', 'ASC']],
+    });
+  } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
+    res.status(500).renderComponent(BookList, {
+      url,
+      error: 'Ошибка сервера',
+    });
+    return;
+  }
+
+  res.renderComponent(BookList, { books, url, userId });
 });
 
 booksRouter.get('/:id/edit', async (req, res) => {
   const { userId } = req.session;
+  const url = userId ? 'authorized' : '';
   let user;
 
   try {
     user = await User.findByPk(userId);
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(BookList, {
-      error: `Ошибка сервера: ${error.message}`,
+      error: 'Ошибка сервера',
     });
     return;
   }
@@ -124,37 +163,23 @@ booksRouter.get('/:id/edit', async (req, res) => {
   try {
     book = await Book.findByPk(req.params.id);
   } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(BookList, {
-      url: 'authorized',
-      error: `Ошибка сервера: ${error.message}`,
+      url,
+      error: 'Ошибка сервера',
+    });
+    return;
+  }
+
+  if (userId !== book.userId) {
+    res.status(403).renderComponent(BookList, {
+      url,
+      error: 'Вы не можете редактировать эту книгу!',
     });
     return;
   }
 
   res.renderComponent(EditBook, { book });
-});
-
-booksRouter.get('/new', async (req, res) => {
-  const { userId } = req.session;
-  let user;
-
-  try {
-    user = await User.findByPk(userId);
-  } catch (error) {
-    res.status(500).renderComponent(BookList, {
-      error: `Ошибка сервера: ${error.message}`,
-    });
-    return;
-  }
-
-  if (!user) {
-    res.status(403).renderComponent(BookList, {
-      error: 'Вы не авторизованы!',
-    });
-    return;
-  }
-
-  res.renderComponent(NewBook);
 });
 
 module.exports = booksRouter;
