@@ -1,12 +1,21 @@
 const React = require('react');
+const CommentItem = require('./CommentItem');
 const Footer = require('./Footer');
 const Header = require('./Header');
 const Layout = require('./Layout');
+const NewComment = require('./NewComment');
 
-module.exports = function BookShow({ book, userId, url }) {
+module.exports = function BookShow({ book, userId, url, error }) {
   return (
     <Layout>
       <Header url={url} userId={userId} />
+
+      {error && (
+        <div>
+          <h3>Ошибка</h3>
+          <p>{error}</p>
+        </div>
+      )}
 
       <img width="200px" src={book.image} alt="cover" />
       <p>{book.title}</p>
@@ -31,6 +40,16 @@ module.exports = function BookShow({ book, userId, url }) {
             Likes:
             <span>{book.likedByUsers.length || 0}</span>
           </p>
+          <div>
+            <h4>
+              Комментарии
+              <span> {book.commentedByUsers.length || 0}</span>
+            </h4>
+            <ul>
+              <CommentItem comment={book.commentedByUsers} />
+            </ul>
+            <NewComment id={book.id} />
+          </div>
         </div>
       )}
 

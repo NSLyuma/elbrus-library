@@ -1,6 +1,7 @@
 const booksRouter = require('express').Router();
 const { User } = require('../db/models');
 const { Book } = require('../db/models');
+const { Comment } = require('../db/models');
 const BookList = require('../views/BookList');
 const BookShow = require('../views/BookShow');
 const EditBook = require('../views/EditBook');
@@ -61,12 +62,54 @@ booksRouter.get('/:id', async (req, res) => {
   let book;
 
   try {
-    book = await Book.findOne({ where: { id: bookId }, include: Book.Likes });
+    book = await Book.findOne({
+      where: { id: bookId },
+      include: [Book.Likes, Book.Comments],
+    });
   } catch (error) {
     console.log(`Ошибка сервера: ${error.message}`);
     res.status(500).renderComponent(BookList, {
       error: 'Ошибка сервера',
     });
+    return;
+  }
+
+  res.renderComponent(BookShow, { book, userId, url });
+});
+
+booksRouter.post('/:id', async (req, res) => {
+  const bookId = req.params.id;
+  const { userId } = req.session;
+  const url = userId ? 'authorized' : '';
+
+  const commentText = req.body.comment.trim();
+
+  try {
+    const comment = await Comment.create({
+      userId,
+      bookId,
+      text: commentText,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    comment.save();
+  } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
+    res.status(500).renderComponent(BookShow, { url, error: 'Ошибка сервера' });
+    return;
+  }
+
+  let book;
+
+  try {
+    book = await Book.findOne({
+      where: { id: bookId },
+      include: [Book.Likes, Book.Comments],
+    });
+  } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
+    res.status(500).renderComponent(BookShow, { url, error: 'Ошибка сервера' });
     return;
   }
 
