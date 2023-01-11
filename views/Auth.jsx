@@ -35,15 +35,15 @@ module.exports = function Auth({ url, error }) {
           {url === 'register' && (
             <select name="group">
               <option value={null}>Группа</option>
-              <option value="eagles">Орлы</option>
-              <option value="owls">Совы</option>
-              <option value="bees">Пчёлы</option>
-              <option value="bears">Медведи</option>
-              <option value="racoons">Еноты</option>
-              <option value="foxes">Лисы</option>
-              <option value="wolfs">Волки</option>
-              <option value="beavers">Бобры</option>
-              <option value="hedgehogs">Ежи</option>
+              <option value="Орлы">Орлы</option>
+              <option value="Совы">Совы</option>
+              <option value="Пчёлы">Пчёлы</option>
+              <option value="Медведи">Медведи</option>
+              <option value="Еноты">Еноты</option>
+              <option value="Лисы">Лисы</option>
+              <option value="Волки">Волки</option>
+              <option value="Бобры">Бобры</option>
+              <option value="Ежи">Ежи</option>
             </select>
           )}
 

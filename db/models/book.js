@@ -1,18 +1,18 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
-    static associate({ Book }) {
-      User.Books = User.hasMany(Book, {
+  class Book extends Model {
+    static associate({ User }) {
+      Book.Author = Book.belongsTo(User, {
         foreignKey: 'userId',
-        as: 'books',
+        as: 'author',
       });
 
-      User.Likes = User.belongsToMany(Book, {
+      Book.Likes = Book.belongsToMany(User, {
         through: 'Likes',
-        foreignKey: 'userId',
-        otherKey: 'bookId',
-        as: 'likedBooks',
+        foreignKey: 'bookId',
+        otherKey: 'userId',
+        as: 'likedByUsers',
       });
     }
   }
@@ -24,23 +24,20 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER,
     },
-    name: {
+    title: {
       allowNull: false,
       type: DataTypes.TEXT,
     },
-    email: {
-      unique: true,
-      allowNull: false,
+    description: {
       type: DataTypes.TEXT,
     },
-    password: {
-      allowNull: false,
+    image: {
       type: DataTypes.TEXT,
     },
-    group: {
+    link: {
       type: DataTypes.TEXT,
     },
-    year: {
+    userId: {
       type: DataTypes.INTEGER,
     },
     createdAt: {
@@ -55,10 +52,9 @@ module.exports = (sequelize, DataTypes) => {
 
   const options = {
     sequelize,
-    modelName: 'User',
-    tableName: 'Users',
+    modelName: 'Book',
   };
 
-  User.init(attributes, options);
-  return User;
+  Book.init(attributes, options);
+  return Book;
 };

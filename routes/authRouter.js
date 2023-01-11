@@ -95,7 +95,7 @@ authRouter.post('/register', async (req, res) => {
   if (rawPassword.length < 4) {
     res.status(403).renderComponent(Auth, {
       url,
-      error: 'Пароль должен содержать минимум 4 символа!',
+      error: 'Пароль должен содержать минимум 4 символа без пробелов!',
     });
     return;
   }

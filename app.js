@@ -9,6 +9,8 @@ const path = require('path');
 const ssr = require('./middleware/ssr');
 const indexRouter = require('./routes/indexRouter');
 const authRouter = require('./routes/authRouter');
+const booksRouter = require('./routes/booksRouter');
+const usersRouter = require('./routes/usersRouter');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -34,6 +36,8 @@ app.use(session(sessionConfig));
 
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
+app.use('/books', booksRouter);
+app.use('/users', usersRouter);
 
 app
   .listen(PORT)

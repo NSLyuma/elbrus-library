@@ -1,4 +1,5 @@
 const React = require('react');
+const Menu = require('./Menu');
 
 module.exports = function Header({ url, userId }) {
   let headerRight;
