@@ -20,7 +20,9 @@ module.exports = function BookItem({ book, userId }) {
 
       {userId && (
         <div>
-          <a href={`/users/${userId}/books/${book.id}`}>Like</a>
+          <a className="js-like" href={`/users/${userId}/books/${book.id}`}>
+            Like
+          </a>
           <p>
             Likes:
             <span>{book.likedByUsers.length || 0}</span>

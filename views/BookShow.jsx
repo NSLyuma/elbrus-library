@@ -5,7 +5,7 @@ const Header = require('./Header');
 const Layout = require('./Layout');
 const NewComment = require('./NewComment');
 
-module.exports = function BookShow({ book, userId, url, error }) {
+module.exports = function BookShow({ book, userId, url, comments, error }) {
   return (
     <Layout>
       <Header url={url} userId={userId} />
@@ -35,7 +35,9 @@ module.exports = function BookShow({ book, userId, url, error }) {
 
       {userId && (
         <div>
-          <a href={`/users/${userId}/books/${book.id}`}>Like</a>
+          <a className="js-like" href={`/users/${userId}/books/${book.id}`}>
+            Like
+          </a>
           <p>
             Likes:
             <span>{book.likedByUsers.length || 0}</span>
@@ -43,10 +45,12 @@ module.exports = function BookShow({ book, userId, url, error }) {
           <div>
             <h4>
               Комментарии
-              <span> {book.commentedByUsers.length || 0}</span>
+              <span> {comments.length}</span>
             </h4>
             <ul>
-              <CommentItem comment={book.commentedByUsers} />
+              {comments.map((comment) => (
+                <CommentItem comment={comment} />
+              ))}
             </ul>
             <NewComment id={book.id} />
           </div>

@@ -15,9 +15,16 @@ module.exports = (sequelize, DataTypes) => {
         as: 'likedBooks',
       });
 
+      // User.Comments = User.belongsToMany(Book, {
+      //   through: 'Comments',
+      //   foreignKey: 'userId',
+      //   otherKey: 'bookId',
+      //   as: 'comments',
+      // });
+
       User.Comments = User.hasMany(Comment, {
         foreignKey: 'userId',
-        as: 'commentedBooks',
+        as: 'comments',
       });
     }
   }

@@ -84,8 +84,9 @@ booksRouter.post('/:id', async (req, res) => {
 
   const commentText = req.body.comment.trim();
 
+  let comment;
   try {
-    const comment = await Comment.create({
+    comment = await Comment.create({
       userId,
       bookId,
       text: commentText,
@@ -105,7 +106,7 @@ booksRouter.post('/:id', async (req, res) => {
   try {
     book = await Book.findOne({
       where: { id: bookId },
-      include: [Book.Likes, Book.Comments],
+      include: Book.Likes,
     });
   } catch (error) {
     console.log(`Ошибка сервера: ${error.message}`);
@@ -113,7 +114,16 @@ booksRouter.post('/:id', async (req, res) => {
     return;
   }
 
-  res.renderComponent(BookShow, { book, userId, url });
+  let comments;
+
+  try {
+    comments = await Comment.findAll({ where: { bookId } });
+  } catch (error) {
+    console.log(`Ошибка сервера: ${error.message}`);
+    res.status(500).renderComponent(BookShow, { url, error: 'Ошибка сервера' });
+    return;
+  }
+  res.renderComponent(BookShow, { book, userId, url, comments });
 });
 
 booksRouter.put('/:id', async (req, res) => {

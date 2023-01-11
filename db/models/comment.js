@@ -3,14 +3,14 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Comment extends Model {
     static associate({ User, Book }) {
-      Comment.Author = Comment.belongsTo(User, {
-        foreignKey: 'userId',
-        as: 'author',
-      });
-
       Comment.Book = Comment.belongsTo(Book, {
         foreignKey: 'bookId',
         as: 'commented',
+      });
+
+      Comment.Author = Comment.belongsTo(User, {
+        foreignKey: 'userId',
+        as: 'author',
       });
     }
   }

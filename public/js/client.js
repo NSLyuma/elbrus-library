@@ -60,3 +60,14 @@ if (deleteBtn) {
     window.location.assign('/');
   });
 }
+
+const likes = document.querySelectorAll('.js-like');
+
+// likes.forEach((like) => {
+//   like.addEventListener('click', async (event) => {
+//     event.preventDefault();
+
+//     const url = like.href;
+//     await fetch(url, { method: 'POST' });
+//   });
+// });
